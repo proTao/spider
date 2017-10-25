@@ -1,0 +1,41 @@
+# 把所有实际上是png格式但是后缀是jpg的图片都修改后缀为png
+for f in ./download/*
+do
+    # 获取文件第一字节
+    head=`od -N2 -t x1 $f | head -1 | sed -e 's/0000000//g' -e 's/ //g' |tr -d '\n'`
+    # 获取文件后缀名
+    postfix=${f##*.}
+    # png
+    if (test $head = 8950) && !(test $postfix = png)
+    then
+        # 更改文件后缀
+        mv $f ${f%%.$postfix}.png
+        echo ${f%%.$postfix}.png
+    fi
+
+    # bmp
+    if (test $head = 424d) && !(test $postfix = bmp)
+    then
+        # 更改文件后缀
+        mv $f ${f%%.$postfix}.bmp
+        echo ${f%%.$postfix}.bmp
+    fi
+
+    # gif
+    if (test $head = 4749) && !(test $postfix = gif)
+    then
+        # 删除文件
+        rm $f
+        # mv $f ${f%%.$postfix}.gif
+        echo ${f}
+    fi
+
+    # jpg
+    if (test $head = ffd8) && !(test $postfix = jpg)
+    then
+        # 更改文件后缀
+        mv $f ${f%%.$postfix}.jpg
+        echo ${f%%.postfix}.jpg
+    fi
+done
+
